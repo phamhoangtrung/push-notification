@@ -1,30 +1,9 @@
-/*
- *
- *  Push Notifications codelab
- *  Copyright 2015 Google Inc. All rights reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License
- *
- */
-
-/* eslint-env browser, es6 */
-
 "use strict";
 
-const applicationServerPublicKey =
-  "BDWIK-qSSmsSDaGg7nKorYhiMSMl2YHu_lI86WmrbwyNW1-xAROlH7D3F0DiZo3uUGuBfH9yrjNMoYVqeRpCNbo";
-
 const pushButton = document.querySelector(".js-push-btn");
+const copyBtn = document.getElementById("copy");
+const subscriptionJson = document.querySelector(".js-subscription-json");
+const subscriptionDetails = document.querySelector(".js-subscription-details");
 
 let isSubscribed = false;
 let swRegistration = null;
@@ -105,9 +84,10 @@ function updateBtn() {
   pushButton.disabled = false;
 }
 
-// Prompt part
-function subscribeUser() {
-  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+async function subscribeUser() {
+  const res = await fetchAPI();
+  const { publicVapidKey } = await res.json();
+  const applicationServerKey = urlB64ToUint8Array(publicVapidKey);
   // Ask user to subscribe by display a notification prompt
   swRegistration.pushManager
     .subscribe({
@@ -131,10 +111,6 @@ function subscribeUser() {
 
 function updateSubscriptionOnServer(subscription) {
   // TODO: Send subscription to application server
-
-  const subscriptionJson = document.querySelector(".js-subscription-json");
-  const subscriptionDetails = document.querySelector(".js-subscription-details");
-
   if (subscription) {
     // sent JSON data to server
     subscriptionJson.textContent = JSON.stringify(subscription);
@@ -165,15 +141,31 @@ function unsubscribeUser() {
     });
 }
 
-const subscriptionJson = document.querySelector(".js-subscription-json");
-const copyBtn = document.getElementById("copy");
-
 copyBtn.addEventListener("click", () => {
-  console.log(subscriptionJson.textContent);
-  navigator.clipboard.writeText(subscriptionJson.textContent);
-  alert("Copy successfully");
+  fetchAPI(
+    {
+      subscription: subscriptionJson.textContent,
+      data: {
+        title: "Notification",
+        body: "Hello",
+      },
+    },
+    "POST"
+  );
 });
 
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text);
+function fetchAPI(body, method = "GET") {
+  const options = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  if (method !== "GET") {
+    options.body = JSON.stringify(body);
+  }
+
+  const endpoint = "https://arcane-forest-87358.herokuapp.com/subscribe";
+  return fetch(endpoint, options);
 }
