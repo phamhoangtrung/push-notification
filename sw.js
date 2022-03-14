@@ -86,7 +86,7 @@ function navigateOnYes(url) {
       client.focus();
     } else {
       // there are no visible windows. Open one.
-      clients.openWindow(self.location.origin+url);
+      event.waitUntil(clients.openWindow(self.location.origin+url));
     }
   });
 }
