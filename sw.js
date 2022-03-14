@@ -32,7 +32,7 @@ self.addEventListener("push", function (event) {
     badge: "images/badge.png",
     vibrate: [200, 100, 200, 100, 200, 100, 400],
     actions: [
-      { action: "yes", title: "Yes" },
+      { action: "yes", title: "Yes111" },
       { action: "no", title: "No" },
     ],
     data: body,
