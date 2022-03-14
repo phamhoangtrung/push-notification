@@ -61,7 +61,7 @@ self.addEventListener("notificationclick", function (event) {
   const { data } = notification;
 
   notification.close();
-  if (action === "yes") {
+  if (action !== "no") {
     clients.openWindow(self.location.origin + data.url);
   }
 
