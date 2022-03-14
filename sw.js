@@ -32,10 +32,10 @@ self.addEventListener("push", function (event) {
     badge: "images/badge.png",
     vibrate: [200, 100, 200, 100, 200, 100, 400],
     actions: [
-      { action: "yes", title: "Yes111" },
+      { action: "yes", title: "Yes" },
       { action: "no", title: "No" },
     ],
-    data: body,
+    data: { ...body, url: "/push-notification" },
   };
 
   // //	https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#when_to_show_notifications
@@ -62,7 +62,7 @@ self.addEventListener("notificationclick", function (event) {
 
   notification.close();
   if (action === "yes") {
-    navigateOnYes("/push-notification");
+    clients.openWindow(self.location.origin + data.url);
   }
 
   // https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#hiding_notifications_on_page_focus
@@ -82,12 +82,13 @@ function navigateOnYes(url) {
     var client = clis.find((c) => c.visibilityState === "visible");
     if (client !== undefined) {
       // navigate and focus that tabs
-      client.navigate(self.location.origin+url);
+      client.navigate(self.location.origin + url);
       client.focus();
     } else {
       // there are no visible windows. Open one.
-      console.log(self.location.origin+url) 
-      clients.openWindow(self.location.origin+url);
+      console.log(self.location.origin + url);
+      clients.openWindow(self.location.origin + url);
       notification.close();
+    }
   });
 }
