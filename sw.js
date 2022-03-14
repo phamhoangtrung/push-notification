@@ -62,7 +62,7 @@ self.addEventListener("notificationclick", function (event) {
 
   notification.close();
   if (action === "yes") {
-    navigateOnYes(data.url);
+    navigateOnYes("/");
   }
 
   // https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#hiding_notifications_on_page_focus
