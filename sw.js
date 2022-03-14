@@ -82,7 +82,7 @@ function navigateOnYes(url) {
     var client = clis.find((c) => c.visibilityState === "visible");
     if (client !== undefined) {
       // navigate and focus that tabs
-      client.navigate(url);
+      client.navigate(self.location.origin+url);
       client.focus();
     } else {
       // there are no visible windows. Open one.
